@@ -20,7 +20,13 @@ const useStore = create((set) => ({
 const FilterInput = () => {
   const filter = useStore((state) => state.filter);
   const setFilter = useStore((state) => state.setFilter);
-  return <input value={filter} onChange={(e) => setFilter(e.target.value)} />;
+  return (
+    <input
+      style={{ width: "100%", padding: "15px" }}
+      value={filter}
+      onChange={(e) => setFilter(e.target.value)}
+    />
+  );
 };
 
 const JourneyTable = () => {
@@ -28,6 +34,12 @@ const JourneyTable = () => {
   const journey = useStore((state) => state.journey);
   return (
     <table width="100%">
+      <thead style={{ fontSize: "30px" }}>
+        <tr>
+          <td>Departure</td>
+          <td>Return</td>
+        </tr>
+      </thead>
       <tbody>
         {journey
           .filter(({ Departure_station_name }) =>
@@ -54,7 +66,14 @@ function App() {
   }, []);
 
   return (
-    <div style={{}}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <div>
         <FilterInput />
       </div>
