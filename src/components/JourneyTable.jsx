@@ -137,7 +137,7 @@ const JourneyTable = () => {
   const journey = useStore((state) => state.journey);
   const pageCount = useStore((state) => state.pageCount);
   const loading = useStore((state) => state.loading);
-  const { setLoading } = useStore();
+  const { setLoading, setPageCount } = useStore();
   const fetchIdRef = useRef(0);
 
   const fetchData = useCallback(({ pageSize, pageIndex }) => {
@@ -156,9 +156,9 @@ const JourneyTable = () => {
 
         // Your server could send back total page count.
         // For now we'll just fake it, too
-        pageCount(Math.ceil(serverData.length / pageSize));
+        setPageCount(Math.ceil(journey.length / pageSize));
 
-        loading(false);
+        setLoading(false);
       }
     }, 1000);
   }, []);
