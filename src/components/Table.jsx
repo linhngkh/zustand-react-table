@@ -6,7 +6,6 @@ import JourneyTable from "./JourneyTable";
 const JOURNEY_URL = "https://helsinki-bike-backend.vercel.app/api/journeys";
 
 const Table = () => {
-  const filter = useStore((state) => state.filter);
   const setJourney = useStore((state) => state.setJourney);
   // fetch journey data
   useEffect(() => {
@@ -16,7 +15,7 @@ const Table = () => {
   }, []);
   return (
     <div>
-      <h1>List of Bike Journey</h1>
+      <h1 style={{ textAlign: "center" }}>List of Bike Journey</h1>
       <Styles>
         <JourneyTable />
       </Styles>
