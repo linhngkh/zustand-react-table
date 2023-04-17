@@ -3,8 +3,7 @@ import { create } from "zustand";
 export const useStore = create((set) => ({
   filter: "",
   journey: [],
-  pageCount: 0,
-  loading: false,
+  pagination: 0,
   setFilter: (filter) =>
     set((state) => ({
       ...state,
@@ -15,14 +14,9 @@ export const useStore = create((set) => ({
       ...state,
       journey,
     })),
-  setPageCount: (pageCount) =>
+  setPagination: (pagination) =>
     set((state) => ({
       ...state,
-      pageCount,
-    })),
-  setLoading: (loading) =>
-    set((state) => ({
-      ...state,
-      loading,
+      pagination,
     })),
 }));

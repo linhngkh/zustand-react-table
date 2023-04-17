@@ -1,9 +1,7 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useMemo } from "react";
 import { useStore } from "../store/useStore";
 import {
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
   flexRender,
   createColumnHelper,
   useReactTable,
@@ -23,11 +21,11 @@ const columns = [
     header: () => <span>Return</span>,
   }),
   columnHelper.accessor("Covered_distance", {
-    header: () => "Distance",
+    header: () => "Distance(km)",
     cell: (info) => (info.renderValue() / 1000).toFixed(2),
   }),
   columnHelper.accessor("Duration", {
-    header: () => <span>Duration</span>,
+    header: () => <span>Duration(m)</span>,
     cell: (info) => (info.renderValue() / 60).toFixed(2),
   }),
 ];
@@ -35,14 +33,29 @@ const columns = [
 const JourneyTable = () => {
   const filter = useStore((state) => state.filter);
   const journey = useStore((state) => state.journey);
+  const pagination = useStore((state) => state.pagination);
+  const { pageIndex = 0, pageSize = 10 } = pagination;
 
+  const fetchDataOptions = {
+    pageIndex,
+    pageSize,
+  };
   const rerender = useReducer(() => ({}, {}))[1];
+  const defaultData = React.useMemo(() => [], []);
+  const paginationProps = React.useMemo(
+    () => ({
+      pageIndex,
+      pageSize,
+    }),
+    [pageIndex, pageSize]
+  );
 
   const table = useReactTable({
-    data: journey,
+    data: journey ?? defaultData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
   return (
     <div className="p-2">
       <table>
