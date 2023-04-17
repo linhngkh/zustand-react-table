@@ -45,12 +45,9 @@ const JourneyTable = () => {
   const table = useReactTable({
     data: journey ?? defaultData,
     columns,
-    pageCount: journey.pageCount ?? -1,
-
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-
     debugTable: true,
   });
 
@@ -128,8 +125,8 @@ const JourneyTable = () => {
         <span className="flex items-center gap-1">
           <div>Page</div>
           <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            {table.getState().pagination.pageIndex + 1} of
+            <span>{table.getPageCount()}</span>
           </strong>
         </span>
         <span className="flex items-center gap-1">
@@ -150,7 +147,7 @@ const JourneyTable = () => {
             table.setPageSize(Number(e.target.value));
           }}
         >
-          {[10, 20, 30, 40, 50, 100, 200].map((pageSize) => (
+          {[10, 20, 30, 40, 50, 100, 200, 300].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>
