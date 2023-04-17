@@ -38,7 +38,7 @@ function Table({
     usePagination
   );
 
-  const firstPageRows = rows.slice(0, 20);
+  const firstPageRows = rows.slice(0, 30);
 
   useEffect(() => {
     fetchData({ pageIndex, pageSize });
@@ -87,7 +87,7 @@ function Table({
               <td colSpan="10000">Loading...</td>
             ) : (
               <td colSpan="10000">
-                Showing the first 20 of {rows.length} results of ~
+                Showing the first 20 of {page.length} results of ~
                 {controlledPageCount * pageSize} results
               </td>
             )}
@@ -151,7 +151,7 @@ const JourneyTable = () => {
   const journey = useStore((state) => state.journey);
   const pageCount = useStore((state) => state.pageCount);
   const loading = useStore((state) => state.loading);
-  const { setLoading, setPageCount } = useStore();
+  const { setJourney, setLoading, setPageCount } = useStore();
   const fetchIdRef = useRef(0);
 
   const fetchData = useCallback(({ pageSize, pageIndex }) => {
@@ -166,11 +166,11 @@ const JourneyTable = () => {
       if (fetchId === fetchIdRef.current) {
         const startRow = pageSize * pageIndex;
         const endRow = startRow + pageSize;
-        journey.slice(startRow, endRow);
+        setJourney(journey.slice(startRow, endRow));
 
         // Your server could send back total page count.
         // For now we'll just fake it, too
-        setPageCount(Math.ceil(pageCount.length / pageSize));
+        setPageCount(Math.ceil(journey.length / pageSize));
 
         setLoading(false);
       }

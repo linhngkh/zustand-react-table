@@ -2,7 +2,7 @@ import { useStore } from "../store/useStore";
 import { useEffect } from "react";
 import FilterInput from "./FilterInput";
 import JourneyTable from "./JourneyTable";
-
+import { Styles } from "./StyledTable";
 const JOURNEY_URL = "https://helsinki-bike-backend.vercel.app/api/journeys";
 
 const Table = () => {
@@ -20,9 +20,9 @@ const Table = () => {
         <FilterInput />
       </div>
       <h1>list of journey</h1>
-      <div>
+      <Styles>
         <JourneyTable />
-      </div>
+      </Styles>
     </div>
   );
 };
