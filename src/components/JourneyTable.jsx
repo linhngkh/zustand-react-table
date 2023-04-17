@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useCallback } from "react";
 import { useStore } from "../store/useStore";
-import { useTable, usePagination } from "react-table";
+import { useTable, usePagination, useSortBy } from "react-table";
 
 function Table({
   columns,
@@ -34,8 +34,11 @@ function Table({
       manualPagination: true,
       pageCount: controlledPageCount,
     },
+    useSortBy,
     usePagination
   );
+
+  const firstPageRows = rows.slice(0, 20);
 
   useEffect(() => {
     fetchData({ pageIndex, pageSize });
@@ -44,19 +47,30 @@ function Table({
   return (
     <>
       <table {...getTableProps()}>
+        {/* TABLE HEAD */}
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                <th {...column.getHeaderProps()}>
+                  {column.render("Header")}
+                  <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? " 🔽"
+                        : " 🔼"
+                      : ""}
+                  </span>
+                </th>
               ))}
             </tr>
           ))}
         </thead>
+        {/*TABLE BODY */}
         <tbody {...getTableBodyProps}>
-          {rows.map((row, id) => {
+          {firstPageRows.map((row, id) => {
             prepareRow(row);
-
+            // TABLE ROW
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
@@ -73,8 +87,8 @@ function Table({
               <td colSpan="10000">Loading...</td>
             ) : (
               <td colSpan="10000">
-                Showing {page.length} of ~{controlledPageCount * pageSize}{" "}
-                results
+                Showing the first 20 of {rows.length} results of ~
+                {controlledPageCount * pageSize} results
               </td>
             )}
           </tr>
@@ -156,7 +170,7 @@ const JourneyTable = () => {
 
         // Your server could send back total page count.
         // For now we'll just fake it, too
-        setPageCount(Math.ceil(journey.length / pageSize));
+        setPageCount(Math.ceil(pageCount.length / pageSize));
 
         setLoading(false);
       }
