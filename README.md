@@ -21,5 +21,5 @@
 
 
 ### License
-Data JSON file is from api link of Solita's Pre-Assignment 2023 - Helsinki City Bike
+Data JSON file is from api link of Solita's [Pre-Assignment 2023 - Helsinki City Bike](https://github.com/linhngkh/helsinki-bike-backend)
 
