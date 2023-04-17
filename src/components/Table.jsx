@@ -1,8 +1,8 @@
 import { useStore } from "../store/useStore";
 import { useEffect } from "react";
-import FilterInput from "./FilterInput";
-import JourneyTable from "./JourneyTable";
+
 import { Styles } from "./StyledTable";
+import JourneyTable from "./JourneyTable";
 const JOURNEY_URL = "https://helsinki-bike-backend.vercel.app/api/journeys";
 
 const Table = () => {
@@ -16,10 +16,7 @@ const Table = () => {
   }, []);
   return (
     <div>
-      <div>
-        <FilterInput />
-      </div>
-      <h1>list of journey</h1>
+      <h1>List of Bike Journey</h1>
       <Styles>
         <JourneyTable />
       </Styles>

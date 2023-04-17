@@ -1,215 +1,80 @@
-import React, { useEffect, useMemo, useRef, useCallback } from "react";
+import React, { useReducer } from "react";
 import { useStore } from "../store/useStore";
-import { useTable, usePagination, useSortBy } from "react-table";
+import {
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  flexRender,
+  createColumnHelper,
+  useReactTable,
+} from "@tanstack/react-table";
 
-function Table({
-  columns,
-  data,
-  pageCount: controlledPageCount,
-  loading,
-  fetchData,
-}) {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    rows,
-    page,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    // Get the state from the instance
-    state: { pageIndex, pageSize },
-  } = useTable(
-    {
-      columns,
-      data,
-      initialState: { pageIndex: 0 },
-      manualPagination: true,
-      pageCount: controlledPageCount,
-    },
-    useSortBy,
-    usePagination
-  );
+const columnHelper = createColumnHelper();
 
-  const firstPageRows = rows.slice(0, 30);
+// COLUMNS
+const columns = [
+  columnHelper.accessor("Departure_station_name", {
+    cell: (info) => info.getValue(),
+    header: () => <span>Departure</span>,
+  }),
+  columnHelper.accessor((row) => row.Return_station_name, {
+    id: "return",
+    cell: (info) => <i>{info.getValue()}</i>,
+    header: () => <span>Return</span>,
+  }),
+  columnHelper.accessor("Covered_distance", {
+    header: () => "Distance",
+    cell: (info) => (info.renderValue() / 1000).toFixed(2),
+  }),
+  columnHelper.accessor("Duration", {
+    header: () => <span>Duration</span>,
+    cell: (info) => (info.renderValue() / 60).toFixed(2),
+  }),
+];
 
-  useEffect(() => {
-    fetchData({ pageIndex, pageSize });
-  }, [fetchData, pageIndex, pageSize]);
+const JourneyTable = () => {
+  const filter = useStore((state) => state.filter);
+  const journey = useStore((state) => state.journey);
 
+  const rerender = useReducer(() => ({}, {}))[1];
+
+  const table = useReactTable({
+    data: journey,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
   return (
-    <>
-      <table {...getTableProps()}>
-        {/* TABLE HEAD */}
+    <div className="p-2">
+      <table>
         <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>
-                  {column.render("Header")}
-                  <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? " 🔽"
-                        : " 🔼"
-                      : ""}
-                  </span>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                 </th>
               ))}
             </tr>
           ))}
         </thead>
-        {/*TABLE BODY */}
-        <tbody {...getTableBodyProps}>
-          {firstPageRows.map((row, id) => {
-            prepareRow(row);
-            // TABLE ROW
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-          <tr>
-            {loading ? (
-              // Use our custom loading state to show a loading indicator
-              <td colSpan="10000">Loading...</td>
-            ) : (
-              <td colSpan="10000">
-                Showing the first 20 of {page.length} results of ~
-                {controlledPageCount * pageSize} results
-              </td>
-            )}
-          </tr>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
-      {/* 
-        Pagination can be built however you'd like. 
-        This is just a very basic UI implementation:
-      */}
-      <div className="pagination">
-        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {"<<"}
-        </button>{" "}
-        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {"<"}
-        </button>{" "}
-        <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {">"}
-        </button>{" "}
-        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {">>"}
-        </button>{" "}
-        <span>
-          Page{" "}
-          <strong>
-            {pageIndex + 1} of {pageOptions.length}
-          </strong>{" "}
-        </span>
-        <span>
-          | Go to page:{" "}
-          <input
-            type="number"
-            defaultValue={pageIndex + 1}
-            onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              gotoPage(page);
-            }}
-            style={{ width: "100px" }}
-          />
-        </span>{" "}
-        <select
-          value={pageSize}
-          onChange={(e) => {
-            setPageSize(Number(e.target.value));
-          }}
-        >
-          {[30, 60, 90, 120, 200].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
-      </div>
-    </>
-  );
-}
-
-const JourneyTable = () => {
-  const filter = useStore((state) => state.filter);
-  const journey = useStore((state) => state.journey);
-  const pageCount = useStore((state) => state.pageCount);
-  const loading = useStore((state) => state.loading);
-  const { setJourney, setLoading, setPageCount } = useStore();
-  const fetchIdRef = useRef(0);
-
-  const fetchData = useCallback(({ pageSize, pageIndex }) => {
-    // Give this fetch an ID
-    const fetchId = ++fetchIdRef.current;
-    // Set the loading state
-    setLoading(true);
-
-    // We'll even set a delay to simulate a server here
-    setTimeout(() => {
-      // Only update the data if this is the latest fetch
-      if (fetchId === fetchIdRef.current) {
-        const startRow = pageSize * pageIndex;
-        const endRow = startRow + pageSize;
-        setJourney(journey.slice(startRow, endRow));
-
-        // Your server could send back total page count.
-        // For now we'll just fake it, too
-        setPageCount(Math.ceil(journey.length / pageSize));
-
-        setLoading(false);
-      }
-    }, 1000);
-  }, []);
-
-  // COLUMNS
-  const columns = useMemo(
-    () => [
-      {
-        Header: "Departure",
-        accessor: "Departure_station_name",
-      },
-      {
-        Header: "Return",
-        accessor: "Return_station_name",
-      },
-      {
-        Header: "Distance(km)",
-        accessor: "Covered_distance",
-      },
-      {
-        Header: "Duration(m)",
-        accessor: "Duration",
-      },
-    ],
-    []
-  );
-
-  const data = useMemo(() => [...journey], [journey]);
-
-  return (
-    <Table
-      columns={columns}
-      data={data}
-      pageCount={pageCount}
-      loading={loading}
-      fetchData={fetchData}
-    />
+    </div>
   );
 };
 
