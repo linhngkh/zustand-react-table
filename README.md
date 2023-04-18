@@ -12,7 +12,11 @@
 ### App functionality overview:
 - In contrast of complexed Redux, [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction) is small, fast and scalable state management solution for managing state of application. Learning more state management can help me versatile in various of project.  
 
-- Using Tanstack Table v8: show Journey-api-data, including departure station name + return station name, duration and cover distance. we can search for name of those in the input.
+- Using Tanstack Table v8: show Journey-api-data, including departure station name + return station name, duration and cover distance. we can search for name of those in each input field. 
+
+- Min and max filters are still needed to experimental. 
+
+- Pagination is also added for showing large data. 
 
 - The app will be developed more.
 ### Demo Link 
