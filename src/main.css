@@ -3,3 +3,11 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.products {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 20px;
+}

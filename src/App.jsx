@@ -1,5 +1,5 @@
 import Table from "./components/Table";
-
+import Products from "./components/addToCart/Products";
 function App() {
   return (
     <div
@@ -11,6 +11,7 @@ function App() {
       }}
     >
       <Table />
+      <Products />
     </div>
   );
 }
