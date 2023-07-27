@@ -12,6 +12,7 @@
     "@tanstack/react-table": "^8.8.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.2",
     "styled-components": "^5.3.9",
     "zustand": "^4.3.7"
   },
